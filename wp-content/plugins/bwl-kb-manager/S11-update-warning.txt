@@ -1,0 +1,9 @@
+When updating, go to includes/bkb-single-post-functions.php file and replace this line
+
+function get_bkb_attachment( $id ) {
+
+with this one
+
+function get_bkb_attachment2( $id ) {
+
+Note: only the function name is to be changed, as it's declared in themes/legenda-child/functions.php

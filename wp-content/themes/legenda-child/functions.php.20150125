@@ -1,0 +1,154 @@
+<?php
+function child_ts_theme_widgets_init(){
+    register_sidebar( array(
+        'name' => __( 'Header Top Right', 'legenda' ),
+        'id' => 'header-top-right',
+        'before_widget' => '<div id="%1$s" class="sidebar_widget %2$s">',
+        'after_widget' => '</div>',
+        'before_title' => '<div class="sidebar_title"><h3>',
+        'after_title' => '</h3></div>',
+    ) );
+
+    register_sidebar( array(
+        'name' => __( 'Header Home', 'legenda' ),
+        'id' => 'header-home',
+        'before_widget' => '<div id="%1$s" class="sidebar_widget %2$s">',
+        'after_widget' => '</div>',
+        'before_title' => '<div class="sidebar_title"><h3>',
+        'after_title' => '</h3></div>',
+    ) );
+
+    register_sidebar( array(
+        'name' => __( 'Copyright area 1', 'legenda' ),
+        'id' => 'coyright-area-1',
+        'before_widget' => '<div id="%1$s" class="sidebar_widget %2$s">',
+        'after_widget' => '</div>',
+        'before_title' => '<div class="sidebar_title"><h3>',
+        'after_title' => '</h3></div>',
+    ) );
+    
+    register_sidebar( array(
+        'name' => __( 'Copyright area 2', 'legenda' ),
+        'id' => 'coyright-area-2',
+        'before_widget' => '<div id="%1$s" class="sidebar_widget %2$s">',
+        'after_widget' => '</div>',
+        'before_title' => '<div class="sidebar_title"><h3>',
+        'after_title' => '</h3></div>',
+    ) );
+    
+    register_sidebar( array(
+        'name' => __( 'Footer Left', 'legenda' ),
+        'id' => 'footer-left',
+        'before_widget' => '<div id="%1$s" class="sidebar_widget %2$s">',
+        'after_widget' => '</div>',
+        'before_title' => '<div class="sidebar_title"><h3>',
+        'after_title' => '</h3></div>',
+    ) );
+
+    register_sidebar( array(
+        'name' => __( 'Footer Center', 'legenda' ),
+        'id' => 'footer-center',
+        'before_widget' => '<div id="%1$s" class="sidebar_widget %2$s">',
+        'after_widget' => '</div>',
+        'before_title' => '<div class="sidebar_title"><h3>',
+        'after_title' => '</h3></div>',
+    ) );
+    register_sidebar( array(
+        'name' => __( 'Footer Right', 'legenda' ),
+        'id' => 'footer-right',
+        'before_widget' => '<div id="%1$s" class="sidebar_widget %2$s">',
+        'after_widget' => '</div>',
+        'before_title' => '<div class="sidebar_title"><h3>',
+        'after_title' => '</h3></div>',
+    ) );
+
+}
+
+add_action( 'widgets_init', 'child_ts_theme_widgets_init' );
+
+// **********************************************************************// 
+// ! Menus
+// **********************************************************************// 
+if(!function_exists('etheme_register_s11_menus')) {
+    function etheme_register_s11_menus() {
+        register_nav_menus(array(
+            'left-menu' => __('Left Menu', ETHEME_DOMAIN),
+            'right-menu' => __('Right Menusenu', ETHEME_DOMAIN),
+            'menu-art'  => __('Menu Art', ETHEME_DOMAIN)
+        ));
+    }
+}
+
+add_action('init', 'etheme_register_s11_menus');
+
+add_shortcode( 'get_latest_articles', 'get_latest_articles' );
+
+function get_latest_articles($atts, $content = null) {
+    extract(shortcode_atts(array(
+        'numberposts' => 2,
+        'category' => get_cat_ID( 'Blog' )
+    ), $atts ) );
+
+    $limit = 2;
+
+    $query_args = array(
+        'numberposts' => 2,
+        'category' => get_cat_ID( 'Articles' )
+    );
+
+    $posts = get_posts( $query_args );
+
+    $output = "";
+
+    foreach ( $posts as $post ) : setup_postdata( $post );
+        $output .= '<div class="footer_article">';
+            $output .= '<a href="'.get_permalink($post->ID).'">'.get_the_title($post->ID).'</a>';
+            $output .= get_the_excerpt();
+        $output .= '</div>';
+    endforeach;
+
+    //pr($posts);
+
+    return $output;
+}
+
+add_shortcode( 'get_my_categories', 'get_my_categories' );
+
+function get_my_categories($atts, $content = null) {
+    extract(shortcode_atts(array(
+        'numberposts' => 2,
+        'category' => get_cat_ID( 'Blog' )
+    ), $atts ) );
+
+    $args = array(
+        'type'                     => 'post',
+        'child_of'                 => 0,
+        'parent'                   => '',
+        'orderby'                  => 'name',
+        'order'                    => 'ASC',
+        'hide_empty'               => 1,
+        'hierarchical'             => 1,
+        'exclude'                  => '',
+        'include'                  => '',
+        'number'                   => '',
+        'taxonomy'                 => 'category',
+        'pad_counts'               => false 
+
+    ); 
+
+    $categories = get_categories( $args );
+
+    $output = "<ul class='categories_list'>";
+
+    foreach ($categories as $category){
+        $output .= '<li><a href="' . get_category_link( $category->term_id ) . '">'.$category->name.'</a></li>';
+    }
+
+    $output .= '</ul>';
+    return $output;
+    pr($categories);
+}
+
+function pr($str){
+    echo "<pre>"; var_dump($str); echo "</pre>";
+}
